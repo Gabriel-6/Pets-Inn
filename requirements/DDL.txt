@@ -1,0 +1,125 @@
+CREATE TABLE `avaliacoes` (
+  `id_avaliacao` int NOT NULL AUTO_INCREMENT,
+  `id_empresa` int NOT NULL,
+  `id_usuario` int NOT NULL,
+  `rating` decimal(2,1) NOT NULL,
+  `titulo` varchar(120) NOT NULL,
+  `comentario` varchar(255) NOT NULL,
+  `anonimo` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id_avaliacao`),
+  UNIQUE KEY `id_avaliacao_UNIQUE` (`id_avaliacao`),
+  KEY `fk_client_id` (`id_usuario`) /*!80000 INVISIBLE */,
+  KEY `fk_empres_id` (`id_empresa`) /*!80000 INVISIBLE */,
+  CONSTRAINT `fks_cliente_id` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`),
+  CONSTRAINT `fks_empresa_id` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `data_reserva` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `reserva_id` int NOT NULL,
+  `data_reserva` date NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `reserva_id_idx` (`reserva_id`),
+  CONSTRAINT `fk_reserva_id` FOREIGN KEY (`reserva_id`) REFERENCES `reservas` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `empresa` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `cnpj` varchar(45) NOT NULL,
+  `nome` varchar(120) NOT NULL,
+  `senha` varchar(90) NOT NULL,
+  `email` varchar(120) NOT NULL,
+  `ie` varchar(45) NOT NULL,
+  `servico` varchar(45) NOT NULL,
+  `cep` varchar(45) NOT NULL,
+  `bairro` varchar(60) NOT NULL,
+  `logradouro` varchar(120) NOT NULL,
+  `numero` varchar(45) NOT NULL,
+  `complemento` varchar(45) DEFAULT NULL,
+  `cidade` varchar(45) NOT NULL,
+  `estado` varchar(45) NOT NULL,
+  `role` varchar(45) NOT NULL,
+  `num_reserva` int NOT NULL DEFAULT '10',
+  `data_criacao` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `descricao` varchar(1200) DEFAULT NULL,
+  `logo` varchar(220) DEFAULT NULL,
+  `preco` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_empresa_UNIQUE` (`id`),
+  UNIQUE KEY `cnpj_UNIQUE` (`cnpj`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `password_reset` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `token` varchar(36) NOT NULL,
+  `user_id` int NOT NULL,
+  `created_at` datetime NOT NULL,
+  `expires_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `token_UNIQUE` (`token`) /*!80000 INVISIBLE */,
+  KEY `user_id_idx` (`user_id`),
+  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `usuario` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `pets` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_dono` int NOT NULL,
+  `tipo` enum('cachorro','gato') NOT NULL,
+  `nome` varchar(45) NOT NULL,
+  `nascimento` date NOT NULL,
+  `raca` varchar(45) NOT NULL,
+  `porte` enum('pequeno','medio','grande') NOT NULL,
+  `adicional` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `id_idx` (`id_dono`),
+  CONSTRAINT `id` FOREIGN KEY (`id_dono`) REFERENCES `usuario` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `reservas` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `cliente_id` int NOT NULL,
+  `local_id` int NOT NULL,
+  `pet_id` int NOT NULL,
+  `status` enum('confirmada','pendente','cancelada','finalizada') NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_cliente_id` (`cliente_id`) /*!80000 INVISIBLE */,
+  KEY `fk_local_id` (`local_id`) /*!80000 INVISIBLE */,
+  KEY `fk_pet_id` (`pet_id`) /*!80000 INVISIBLE */,
+  CONSTRAINT `fk_cliente_id` FOREIGN KEY (`cliente_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_pet_id` FOREIGN KEY (`pet_id`) REFERENCES `pets` (`id`),
+  CONSTRAINT `local_id` FOREIGN KEY (`local_id`) REFERENCES `empresa` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+
+CREATE TABLE `usuario` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(120) NOT NULL,
+  `nome` varchar(120) NOT NULL,
+  `senha` varchar(120) NOT NULL,
+  `telefone` varchar(20) NOT NULL,
+  `cep` varchar(200) NOT NULL,
+  `bairro` varchar(60) NOT NULL,
+  `logradouro` varchar(90) NOT NULL,
+  `numero` varchar(45) NOT NULL,
+  `cidade` varchar(50) NOT NULL,
+  `estado` varchar(45) NOT NULL,
+  `role` varchar(45) NOT NULL,
+  `complemento` varchar(45) DEFAULT NULL,
+  `confirmado` tinyint(1) DEFAULT '0',
+  `token_confirmacao` varchar(50) DEFAULT NULL,
+  `data_criacao` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
