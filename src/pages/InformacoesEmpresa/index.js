@@ -26,6 +26,7 @@ export default function InformacoesEmpresa() {
   const [logradouro, setLogradouro] = useState("");
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
+  const [logo, setLogo] = useState("")
   const [isHotel, setIsHotel] = useState(false);
   const [isCreche, setIsCreche] = useState(false);
   const isFocused = useIsFocused();
@@ -68,7 +69,7 @@ export default function InformacoesEmpresa() {
 
         const data = await response.json();
         setEmpresa(data);
-        
+
         setNome(data[0].nome);
         setServico(data[0].servico);
         setCidade(data[0].cidade);
@@ -76,7 +77,8 @@ export default function InformacoesEmpresa() {
         setLogradouro(data[0].logradouro);
         setDescricao(data[0].descricao);
         setPreco(data[0].preco);
-        
+        setLogo(data[0].logo)
+
         if (data[0].servico === "hotel") {
           setIsHotel(true);
           setIsCreche(false);
@@ -115,6 +117,7 @@ export default function InformacoesEmpresa() {
           logradouro,
           descricao,
           preco,
+          logo,
         }),
       });
 
@@ -238,6 +241,14 @@ export default function InformacoesEmpresa() {
               disabled={!isEditable}
               value={preco}
               onChangeText={setPreco}
+            ></Input>
+
+            <View style={styles.sectionContent}></View>
+            <Text style={styles.sectionTitle}>Logo</Text>
+            <Input
+              disabled={!isEditable}
+              value={logo}
+              onChangeText={setLogo}
             ></Input>
 
             {isEditable && (
